@@ -120,19 +120,13 @@
   @keyframes moveLeft  { from { transform: translateX(80px); } to { transform: translateX(0); } }
   @keyframes moveRight { from { transform: translateX(-80px); } to { transform: translateX(0); } }
 
-  body.rainbow-mode .color-tile {
+  body.rainbow-mode .tile {
     animation: colorShift 1.5s linear infinite alternate;
   }
 
   @keyframes colorShift {
     0%   { filter: hue-rotate(0deg); }
     100% { filter: hue-rotate(90deg); }
-  }
-
-  .special-tile {
-    background: radial-gradient(circle, gold, orange, red);
-    color: white;
-    text-shadow: 2px 2px 5px black;
   }
 
   #message {
@@ -319,7 +313,8 @@
 </style>
 </head>
 <body>
-  <!-- MENU -->
+
+<!-- MENU -->
 <div id="menu">
   <h1>Choose a Mode</h1>
   <button class="menu-button" onclick="startTileWorld()">Tile World</button>
@@ -350,8 +345,12 @@
 ----------------------------- */
 
 function enterFullscreenMode() {
-  document.documentElement.requestFullscreen();
-  showFullscreenMenu();
+  if (document.fullscreenElement) {
+    // already fullscreen; just show menu inside
+    showFullscreenMenu();
+    return;
+  }
+  document.documentElement.requestFullscreen().then(showFullscreenMenu).catch(showFullscreenMenu);
 }
 
 function showFullscreenMenu() {
@@ -386,7 +385,9 @@ function enableExitCircle() {
 }
 
 function exitFullscreen() {
-  document.exitFullscreen();
+  if (document.fullscreenElement) {
+    document.exitFullscreen();
+  }
   document.getElementById("exit-circle").style.display = "none";
   document.getElementById("exit-fullscreen-btn").style.display = "none";
   returnToMenu();
@@ -424,7 +425,8 @@ function startColorSplash() {
     changeSplashColor();
   };
 }
-  /* -----------------------------
+
+/* -----------------------------
    AUDIO ENGINE (SHARED)
 ----------------------------- */
 
@@ -513,8 +515,6 @@ function playAnimalTone(emoji) {
 const splashSpecialEmojis = [
   "🎁","🌈","⭐","🌙","☀️","💡","⚡","❄️","🔥","🌼"
 ];
-
-let forceNextSpecial = false;
 
 function resetColorSplashModes() {
   const splash = document.getElementById("color-splash");
@@ -712,6 +712,7 @@ function triggerSplashSpecial() {
       break;
   }
 }
+
 /* -----------------------------
    TILE WORLD — GLOBALS
 ----------------------------- */
@@ -829,10 +830,7 @@ function moveWorld(dx, dy, directionClass) {
   playSpecialTone(300 + Math.random()*200);
 }
 
-/* -----------------------------
-   ARROW KEY MOVEMENT
------------------------------ */
-
+/* ARROW KEYS */
 window.onkeydown = (e) => {
   if (document.getElementById("tile-world-container").style.display !== "block") return;
 
@@ -842,10 +840,7 @@ window.onkeydown = (e) => {
   if (e.key === "ArrowRight") moveWorld(1, 0, "move-right");
 };
 
-/* -----------------------------
-   SWIPE MOVEMENT
------------------------------ */
-
+/* SWIPE MOVEMENT */
 let touchStartX = 0;
 let touchStartY = 0;
 
@@ -868,10 +863,6 @@ window.addEventListener("touchend", (e) => {
     if (dy < -40) moveWorld(0, -1, "move-up");
   }
 });
-
-/* -----------------------------
-   END OF SCRIPT
------------------------------ */
 </script>
 
 </body>
