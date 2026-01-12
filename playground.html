@@ -712,7 +712,7 @@ function triggerSplashSpecial() {
       break;
   }
 }
-  /* -----------------------------
+/* -----------------------------
    TILE WORLD — GLOBALS
 ----------------------------- */
 
@@ -829,7 +829,10 @@ function moveWorld(dx, dy, directionClass) {
   playSpecialTone(300 + Math.random()*200);
 }
 
-/* Arrow keys */
+/* -----------------------------
+   ARROW KEY MOVEMENT
+----------------------------- */
+
 window.onkeydown = (e) => {
   if (document.getElementById("tile-world-container").style.display !== "block") return;
 
@@ -839,7 +842,10 @@ window.onkeydown = (e) => {
   if (e.key === "ArrowRight") moveWorld(1, 0, "move-right");
 };
 
-/* Swipe support */
+/* -----------------------------
+   SWIPE MOVEMENT
+----------------------------- */
+
 let touchStartX = 0;
 let touchStartY = 0;
 
